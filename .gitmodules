@@ -1,0 +1,6 @@
+[submodule "dependencies/raylib-modern"]
+	path = dependencies/raylib-modern
+	url = git@github.com:nazimaraz/raylib-modern.git
+[submodule "dependencies/imgui/imgui"]
+	path = dependencies/imgui/imgui
+	url = git@github.com:ocornut/imgui.git
