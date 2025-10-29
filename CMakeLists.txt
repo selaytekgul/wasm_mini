@@ -25,6 +25,7 @@ if (EMSCRIPTEN)
     set(SUPPORT_COMPRESSION_API ON CACHE BOOL "" FORCE)
 endif()
 
-add_executable(wasm_mini main.cpp)
-add_subdirectory(dependencies)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies)
 target_link_libraries(${PROJECT_NAME} PUBLIC rlImGui)
