@@ -26,6 +26,6 @@ if (EMSCRIPTEN)
 endif()
 
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/source)
 target_link_libraries(${PROJECT_NAME} PUBLIC rlImGui)
