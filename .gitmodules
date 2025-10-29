@@ -4,6 +4,6 @@
 [submodule "dependencies/imgui/imgui"]
 	path = dependencies/imgui/imgui
 	url = git@github.com:ocornut/imgui.git
-[submodule "dependencies/rlImGui/rlImGui"]
-	path = dependencies/rlImGui/rlImGui
+[submodule "dependencies/rlImGui/rlImGui-modern"]
+	path = dependencies/rlImGui/rlImGui-modern
 	url = git@github.com:nazimaraz/rlImGui-modern.git

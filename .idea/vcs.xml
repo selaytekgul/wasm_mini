@@ -2,5 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/dependencies/imgui/imgui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/dependencies/raylib-modern" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/dependencies/rlImGui/rlImGui-modern" vcs="Git" />
   </component>
 </project>
