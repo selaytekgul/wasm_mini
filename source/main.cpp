@@ -5,28 +5,28 @@
 
 int main()
 {
-    using namespace raylib;
-    InitWindow(800, 450, "raylib + ImGui + rlImGui (minimal)");
-    SetTargetFPS(60);
+    // using namespace raylib;
+    raylib::InitWindow(800, 450, "raylib + ImGui + rlImGui (minimal)");
+    raylib::SetTargetFPS(60);
 
-    rlImGuiSetup(true); // true = dark theme
+    raylib::rlImGuiSetup(true); // true = dark theme
 
     bool show_demo = true;
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
+    while (!raylib::WindowShouldClose()) {
+        raylib::BeginDrawing();
+        raylib::ClearBackground(raylib::RAYWHITE);
 
         // ImGui pass (between BeginDrawing/EndDrawing)
-        rlImGuiBegin();
+        raylib::rlImGuiBegin();
         ImGui::Begin("Hello"); ImGui::Text("Hi from ImGui + raylib!"); ImGui::End();
         if (show_demo) ImGui::ShowDemoWindow(&show_demo); // optional
-        rlImGuiEnd();
+        raylib::rlImGuiEnd();
 
-        DrawText("Raylib draw still works under the ImGui overlay.", 10, 420, 10, DARKGRAY);
-        EndDrawing();
+        raylib::DrawText("Raylib draw still works under the ImGui overlay.", 10, 420, 10, raylib::DARKGRAY);
+        raylib::EndDrawing();
     }
 
-    rlImGuiShutdown();
-    CloseWindow();
+    raylib::rlImGuiShutdown();
+    raylib::CloseWindow();
     return 0;
 }
