@@ -1,5 +1,5 @@
 #CollectSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} source_files)
-add_library(rlImGui STATIC rlImGui-modern/rlImGui.cpp)
+add_library(rlImGui STATIC ${CMAKE_CURRENT_SOURCE_DIR}/rlImGui-modern/rlImGui.cpp)
 #        ${source_files})
 target_include_directories(rlImGui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/rlImGui-modern)
 target_link_libraries(rlImGui PUBLIC raylib imgui)

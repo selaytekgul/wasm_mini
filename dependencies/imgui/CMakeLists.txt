@@ -1,12 +1,12 @@
 #CollectSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} source_files)
 add_library(imgui STATIC
-        imgui/imgui.cpp
-        imgui/imgui_demo.cpp
-        imgui/imgui_draw.cpp
-        imgui/imgui_tables.cpp
-        imgui/imgui_widgets.cpp
-        imgui/backends/imgui_impl_opengl3.cpp
-        imgui/backends/imgui_impl_glfw.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_tables.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_widgets.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends/imgui_impl_opengl3.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends/imgui_impl_glfw.cpp)
 #        ${source_files})
 
 target_include_directories(imgui PUBLIC
