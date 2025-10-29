@@ -8,6 +8,7 @@ function(CompileOptions app_name)
             -Werror
 
             # disabled options
+            -Wno-dev
             -Wno-unused-function
             -Wno-unused-lambda-capture
             -Wno-unused-parameter

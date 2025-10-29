@@ -1,6 +1,7 @@
 #include <iostream>
 #include <imgui.h>
 #include <rlImGui.h>
+#include "Bezier.h"
 
 int main()
 {
