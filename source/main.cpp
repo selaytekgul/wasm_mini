@@ -71,6 +71,8 @@ int main(void)
     //    We start as 'true' so the point isn't moving on launch.
     bool isMovementFrozen = true;
 
+    int quadraticSegments = 30;
+    int cubicSegments = 40;
 
     // --- Main Game Loop ---
     while (!WindowShouldClose())
@@ -112,7 +114,7 @@ int main(void)
 
         // --- Draw Quadratic Example ---
         DrawText("Quadratic Bézier", 100, 50, 20, GRAY);
-        b.drawQuadraticCurve(q_p0, q_p1, q_p2, 3.0f, WHITE, 30);
+        b.drawQuadraticCurve(q_p0, q_p1, q_p2, 3.0f, WHITE, quadraticSegments);
         DrawLineV(q_p0, q_p1, GRAY);
         DrawLineV(q_p1, q_p2, GRAY);
 
@@ -123,7 +125,7 @@ int main(void)
 
         // --- Draw Cubic Example ---
         DrawText("Cubic Bézier", 600, 50, 20, GRAY);
-        b.drawCubicCurve(c_p0, c_p1, c_p2, c_p3, 3.0f, WHITE, 40);
+        b.drawCubicCurve(c_p0, c_p1, c_p2, c_p3, 3.0f, WHITE, cubicSegments);
         DrawLineV(c_p0, c_p1, GRAY);
         DrawLineV(c_p1, c_p2, GRAY);
         DrawLineV(c_p2, c_p3, GRAY);
@@ -170,6 +172,18 @@ int main(void)
         ImGui::RadioButton("C Control (P1)", &selectedPoint, 5);
         ImGui::RadioButton("C Control (P2)", &selectedPoint, 6);
         ImGui::RadioButton("C End (P3)", &selectedPoint, 7);
+
+
+        ImGui::Separator();
+        ImGui::Text("Curve Smoothness:");
+
+        // This creates a slider:
+        // - "Quadratic Segments" is the label
+        // - &quadraticSegments is a pointer to the variable it controls
+        // - 1 is the minimum value (can't have less than 1 segment)
+        // - 100 is the maximum value (you can change this)
+        ImGui::SliderInt("Quadratic Segments", &quadraticSegments, 1, 50);
+        ImGui::SliderInt("Cubic Segments", &cubicSegments, 1, 50);
 
         ImGui::End();
 
