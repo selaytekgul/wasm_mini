@@ -1,30 +1,22 @@
-// #include "raylib.h"
-// #include "raymath.h"
-#include "Bezier.h" // Your Bézier functions
+#include "Bezier.h"
 
 #include "imgui.h"
-#include "rlImGui.h" // The raylib-ImGui connector
+#include "rlImGui.h"
 
-/**
- * @brief Helper function to draw a control point with a selected state.
- */
 using namespace raylib;
 void DrawControlPoint(Vector2 pos, Color color, bool isSelected, bool isFrozen)
 {
     if (isSelected)
     {
-        // Draw a larger, bright circle to show it's selected
         DrawCircleV(pos, 10, WHITE);
 
         if (isFrozen)
         {
-            // Draw a "hollow" circle to show it's frozen
             DrawCircleV(pos, 8, BLACK);
             DrawCircleV(pos, 6, color);
         }
         else
         {
-            // Draw a "solid" circle to show it's active
             DrawCircleV(pos, 8, color);
         }
     }
@@ -34,65 +26,44 @@ void DrawControlPoint(Vector2 pos, Color color, bool isSelected, bool isFrozen)
     }
 }
 
-/**
- * ===================================================================================
- * MAIN APPLICATION
- * ===================================================================================
- */
 int main(void)
 {
     Bezier b;
-    // --- Setup ---
     const int screenWidth = 1280;
     const int screenHeight = 720;
-    InitWindow(screenWidth, screenHeight, "Interactive Bézier Demo (Click-to-Freeze)");
+    InitWindow(screenWidth, screenHeight, "Bézier");
     SetTargetFPS(60);
-
-    // --- ImGui Setup ---
     rlImGuiSetup(true);
 
-    // --- Control Points for Quadratic Curve ---
-    Vector2 q_p0 = { 100, (float)screenHeight / 2 + 100 };
-    Vector2 q_p1 = { 250, 100 };
-    Vector2 q_p2 = { 400, (float)screenHeight / 2 + 100 };
+    Vector2 q_p0 = { 50, (float)screenHeight / 2 + 100 };
+    Vector2 q_p1 = { 150, 100 };
+    Vector2 q_p2 = { 200, (float)screenHeight / 2 + 100 };
+    Vector2 c_p0 = { 250, (float)screenHeight / 2 };
+    Vector2 c_p1 = { 300, 100 };
+    Vector2 c_p2 = { 450, (float)screenHeight - 100 };
+    Vector2 c_p3 = { 500, (float)screenHeight / 2 };
+    Vector2 d4_p0 = { 550, (float)screenHeight / 2 };
+    Vector2 d4_p1 = { 600, 100 };
+    Vector2 d4_p2 = { 650, (float)screenHeight - 100 };
+    Vector2 d4_p3 = { 700, (float)screenHeight / 2 };
+    Vector2 d4_p4 = { 750, (float)screenHeight - 100 };
 
-    // --- Control Points for Cubic Curve ---
-    Vector2 c_p0 = { 600, (float)screenHeight / 2 };
-    Vector2 c_p1 = { 700, 100 };
-    Vector2 c_p2 = { 900, (float)screenHeight - 100 };
-    Vector2 c_p3 = { 1100, (float)screenHeight / 2 };
-
-    // --- STATE MANAGEMENT ---
-
-    // 1. Which point is selected (via ImGui)
-    int selectedPoint = 0; // 0 = None, 1-3 = Quad, 4-7 = Cubic
-
-    // 2. NEW: Is the point "frozen" or "active" (following the mouse)?
-    //    We start as 'true' so the point isn't moving on launch.
+    int selectedPoint = 0; // 0 = None, 1-3 = Quad, 4-7 = Cubic, 8-12
     bool isMovementFrozen = true;
-
-    int quadraticSegments = 30;
-    int cubicSegments = 40;
-
-    // --- Main Game Loop ---
+    int quadraticSegments = 10;
+    int cubicSegments = 10;
+    int degree4Segments = 10;
     while (!WindowShouldClose())
     {
-        // --- Update ---
         Vector2 mousePos = GetMousePosition();
         ImGuiIO& io = ImGui::GetIO();
-
-        // **CRITICAL LOGIC BLOCK**
         if (!io.WantCaptureMouse)
         {
-            // The mouse is in the main window, not over ImGui
-
-            // 1. Check for the "toggle" click
             if (IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
             {
-                isMovementFrozen = !isMovementFrozen; // Flip the state
+                isMovementFrozen = !isMovementFrozen;
             }
 
-            // 2. Only move the point IF movement is NOT frozen
             if (!isMovementFrozen)
             {
                 switch (selectedPoint)
@@ -104,43 +75,48 @@ int main(void)
                     case 5: c_p1 = mousePos; break;
                     case 6: c_p2 = mousePos; break;
                     case 7: c_p3 = mousePos; break;
+                    case 8: d4_p0 = mousePos; break;
+                    case 9: d4_p1 = mousePos; break;
+                    case 10: d4_p2 = mousePos; break;
+                    case 11: d4_p3 = mousePos; break;
+                    case 12: d4_p4 = mousePos; break;
                 }
             }
         }
-
-        // --- Draw ---
         BeginDrawing();
         ClearBackground(BLACK);
-
-        // --- Draw Quadratic Example ---
-        DrawText("Quadratic Bézier", 100, 50, 20, GRAY);
+        DrawText("Quadratic Bézier", 50, 50, 20, GRAY);
         b.drawQuadraticCurve(q_p0, q_p1, q_p2, 3.0f, WHITE, quadraticSegments);
         DrawLineV(q_p0, q_p1, GRAY);
         DrawLineV(q_p1, q_p2, GRAY);
-
-        // Pass the 'isMovementFrozen' state to the draw helper
         DrawControlPoint(q_p0, RED,   selectedPoint == 1, isMovementFrozen);
         DrawControlPoint(q_p1, GREEN, selectedPoint == 2, isMovementFrozen);
         DrawControlPoint(q_p2, RED,   selectedPoint == 3, isMovementFrozen);
 
-        // --- Draw Cubic Example ---
-        DrawText("Cubic Bézier", 600, 50, 20, GRAY);
+        DrawText("Cubic Bézier", 350, 50, 20, GRAY);
         b.drawCubicCurve(c_p0, c_p1, c_p2, c_p3, 3.0f, WHITE, cubicSegments);
         DrawLineV(c_p0, c_p1, GRAY);
         DrawLineV(c_p1, c_p2, GRAY);
         DrawLineV(c_p2, c_p3, GRAY);
-
         DrawControlPoint(c_p0, BLUE,   selectedPoint == 4, isMovementFrozen);
         DrawControlPoint(c_p1, YELLOW, selectedPoint == 5, isMovementFrozen);
         DrawControlPoint(c_p2, YELLOW, selectedPoint == 6, isMovementFrozen);
         DrawControlPoint(c_p3, BLUE,   selectedPoint == 7, isMovementFrozen);
 
-        // --- IMGUI UI DRAW ---
+        DrawText("Degree 4 Bézier", 650, 50, 20, GRAY);
+        b.drawDegree4Curve(d4_p0, d4_p1, d4_p2, d4_p3, d4_p4, 3.0f, WHITE, degree4Segments);
+        DrawLineV(d4_p0, d4_p1, GRAY);
+        DrawLineV(d4_p1, d4_p2, GRAY);
+        DrawLineV(d4_p2, d4_p3, GRAY);
+        DrawLineV(d4_p3, d4_p4, GRAY);
+        DrawControlPoint(d4_p0, BLUE,   selectedPoint == 8, isMovementFrozen);
+        DrawControlPoint(d4_p1, YELLOW, selectedPoint == 9, isMovementFrozen);
+        DrawControlPoint(d4_p2, YELLOW, selectedPoint == 10, isMovementFrozen);
+        DrawControlPoint(d4_p3, YELLOW,   selectedPoint == 11, isMovementFrozen);
+        DrawControlPoint(d4_p4, BLUE,   selectedPoint == 12, isMovementFrozen);
+
         rlImGuiBegin();
-
         ImGui::Begin("Control Panel");
-
-        // NEW: Add a status indicator so the user knows the state
         ImGui::Text("Movement Status:");
         if (isMovementFrozen)
         {
@@ -157,42 +133,34 @@ int main(void)
         ImGui::Text("Select Point to Move:");
         ImGui::Separator();
 
-        // Radio buttons now just select the point. They don't affect movement.
         ImGui::RadioButton("None", &selectedPoint, 0);
-
         ImGui::Separator();
         ImGui::Text("Quadratic Curve");
         ImGui::RadioButton("Q Start (P0)", &selectedPoint, 1);
         ImGui::RadioButton("Q Control (P1)", &selectedPoint, 2);
         ImGui::RadioButton("Q End (P2)", &selectedPoint, 3);
-
         ImGui::Separator();
         ImGui::Text("Cubic Curve");
         ImGui::RadioButton("C Start (P0)", &selectedPoint, 4);
         ImGui::RadioButton("C Control (P1)", &selectedPoint, 5);
         ImGui::RadioButton("C Control (P2)", &selectedPoint, 6);
         ImGui::RadioButton("C End (P3)", &selectedPoint, 7);
-
-
+        ImGui::Separator();
+        ImGui::Text("Degree 4 Curve");
+        ImGui::RadioButton("D4 Start (P0)", &selectedPoint, 8);
+        ImGui::RadioButton("D4 Control (P1)", &selectedPoint, 9);
+        ImGui::RadioButton("D4 Control (P2)", &selectedPoint, 10);
+        ImGui::RadioButton("D4 Control (P3)", &selectedPoint, 11);
+        ImGui::RadioButton("D4 End (P4)", &selectedPoint, 12);
         ImGui::Separator();
         ImGui::Text("Curve Smoothness:");
-
-        // This creates a slider:
-        // - "Quadratic Segments" is the label
-        // - &quadraticSegments is a pointer to the variable it controls
-        // - 1 is the minimum value (can't have less than 1 segment)
-        // - 100 is the maximum value (you can change this)
-        ImGui::SliderInt("Quadratic Segments", &quadraticSegments, 1, 50);
-        ImGui::SliderInt("Cubic Segments", &cubicSegments, 1, 50);
-
+        ImGui::SliderInt("Quadratic Segments", &quadraticSegments, 1, 20);
+        ImGui::SliderInt("Cubic Segments", &cubicSegments, 1, 20);
+        ImGui::SliderInt("Degree 4 Segments", &degree4Segments, 1, 20);
         ImGui::End();
-
         rlImGuiEnd();
-
         EndDrawing();
-    }
 
-    // --- Cleanup ---
     rlImGuiShutdown();
     CloseWindow();
     return 0;
