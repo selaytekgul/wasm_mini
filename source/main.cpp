@@ -56,6 +56,7 @@ int main(void)
 
     int selectedPoint = 0; // 0 = None, 1-3 = Quad, 4-7 = Cubic, 8-12 = Degree 4, 13-18 = Degree 5
     bool isMovementFrozen = true;
+    int quadraticSlider = 1;
     int quadraticSegments = 10;
     int cubicSegments = 10;
     int degree4Segments = 10;
@@ -99,7 +100,7 @@ int main(void)
         BeginDrawing();
         ClearBackground(BLACK);
         DrawText("Quadratic Bézier", 50, 50, 20, GRAY);
-        b.drawQuadraticCurve(q_p0, q_p1, q_p2, 3.0f, WHITE, quadraticSegments);
+        b.drawQuadraticCurveUsingSlider(q_p0, q_p1, q_p2, 3.0f, WHITE, quadraticSegments, quadraticSlider);
         DrawLineV(q_p0, q_p1, GRAY);
         DrawLineV(q_p1, q_p2, GRAY);
         DrawControlPoint(q_p0, RED,   selectedPoint == 1, isMovementFrozen);
@@ -159,7 +160,8 @@ int main(void)
         ImGui::Separator();
         ImGui::Text("Select Point to Move:");
         ImGui::Separator();
-
+        ImGui::SliderInt("Quadratic Slider", &quadraticSlider, 1, 20);
+        ImGui::Separator();
         ImGui::RadioButton("None", &selectedPoint, 0);
         ImGui::Separator();
         ImGui::Text("Quadratic Curve");

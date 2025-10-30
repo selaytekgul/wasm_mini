@@ -69,6 +69,20 @@ void Bezier::drawQuadraticCurve(Vector2 p0, Vector2 p1, Vector2 p2, float thickn
     }
 }
 
+
+void Bezier::drawQuadraticCurveUsingSlider(Vector2 p0, Vector2 p1, Vector2 p2, float thickness, Color color, int segments, int slider)
+{
+    if (segments < 1) segments = 1;
+    Vector2 oldPoint = p0;
+    for (int i = 1; i <= slider; i++)
+    {
+        float t = static_cast<float>(i) / static_cast<float>(segments);
+        Vector2 newPoint = getQuadraticPoint(p0, p1, p2, t);
+        DrawLineEx(oldPoint, newPoint, thickness, color);
+        oldPoint = newPoint;
+    }
+}
+
 void Bezier::drawCubicCurve(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, float thickness, Color color, int segments)
 {
     if (segments < 1) segments = 1;
