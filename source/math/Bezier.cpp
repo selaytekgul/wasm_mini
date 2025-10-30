@@ -10,6 +10,7 @@ Vector2 Bezier::getQuadraticPoint(Vector2 p0, Vector2 p1, Vector2 p2, float t)
 {
     Vector2 v1 = Vector2Lerp(p0, p1, t);
     Vector2 v2 = Vector2Lerp(p1, p2, t);
+    DrawLineEx(v1, v2, 3.0f * 0.3f, GRAY);
     return Vector2Lerp(v1, v2, t);
 }
 
@@ -18,8 +19,13 @@ Vector2 Bezier::getCubicPoint(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, fl
     Vector2 v_ab = Vector2Lerp(p0, p1, t);
     Vector2 v_bc = Vector2Lerp(p1, p2, t);
     Vector2 v_cd = Vector2Lerp(p2, p3, t);
+    DrawLineEx(v_ab, v_bc, 3.0f * 0.3f, BLUE);
+    DrawLineEx(v_bc, v_cd, 3.0f * 0.3f, BLUE);
+
     Vector2 v_abc = Vector2Lerp(v_ab, v_bc, t);
     Vector2 v_bcd = Vector2Lerp(v_bc, v_cd, t);
+    DrawLineEx(v_abc, v_bcd, 3.0f * 0.3f, GREEN);
+
     return Vector2Lerp(v_abc, v_bcd, t);
 }
 
