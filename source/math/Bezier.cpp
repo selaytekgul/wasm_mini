@@ -43,12 +43,17 @@ Vector2 Bezier::getDegree5Point(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, 
     Vector2 v_bc = Vector2Lerp(p1, p2, t);
     Vector2 v_cd = Vector2Lerp(p2, p3, t);
     Vector2 v_de = Vector2Lerp(p3, p4, t);
+    Vector2 v_ef = Vector2Lerp(p4, p5, t);
     Vector2 v_abc = Vector2Lerp(v_ab, v_bc, t);
     Vector2 v_bcd = Vector2Lerp(v_bc, v_cd, t);
     Vector2 v_cde = Vector2Lerp(v_cd, v_de, t);
+    Vector2 v_def = Vector2Lerp(v_de, v_ef, t);
     Vector2 v_abcd = Vector2Lerp(v_abc, v_bcd, t);
     Vector2 v_bcde = Vector2Lerp(v_bcd, v_cde, t);
-    return Vector2Lerp(v_abcd, v_bcde, t);
+    Vector2 v_cdef = Vector2Lerp(v_cde, v_def, t);
+    Vector2 v_abcde = Vector2Lerp(v_abcd, v_bcde, t);
+    Vector2 v_bcdef = Vector2Lerp(v_bcde, v_cdef, t);
+    return Vector2Lerp(v_abcde, v_bcdef, t);
 }
 
 void Bezier::drawQuadraticCurve(Vector2 p0, Vector2 p1, Vector2 p2, float thickness, Color color, int segments)
@@ -103,7 +108,7 @@ void Bezier::drawDegree5Curve(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, Ve
     for (int i = 1; i <= segments; i++)
     {
         float t = (float)i / (float)segments;
-        Vector2 newPoint = getDegree4Point(p0, p1, p2, p3, p4, t);
+        Vector2 newPoint = getDegree5Point(p0, p1, p2, p3, p4, p5, t);
         DrawLineEx(oldPoint, newPoint, thickness, color);
         oldPoint = newPoint;
     }

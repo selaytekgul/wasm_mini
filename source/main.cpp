@@ -116,7 +116,7 @@ int main(void)
         DrawControlPoint(c_p2, YELLOW, selectedPoint == 6, isMovementFrozen);
         DrawControlPoint(c_p3, BLUE,   selectedPoint == 7, isMovementFrozen);
 
-        DrawText("Degree 4 Bézier", 650, 50, 20, GRAY);
+        DrawText("Degree 4 Bézier", 700, 50, 20, GRAY);
         b.drawDegree4Curve(d4_p0, d4_p1, d4_p2, d4_p3, d4_p4, 3.0f, WHITE, degree4Segments);
         DrawLineV(d4_p0, d4_p1, GRAY);
         DrawLineV(d4_p1, d4_p2, GRAY);
@@ -128,8 +128,8 @@ int main(void)
         DrawControlPoint(d4_p3, YELLOW,   selectedPoint == 11, isMovementFrozen);
         DrawControlPoint(d4_p4, BLUE,   selectedPoint == 12, isMovementFrozen);
 
-        DrawText("Degree 5 Bézier", 800, 50, 20, GRAY);
-        b.drawDegree5Curve(d5_p0, d5_p1, d5_p2, d5_p3, d5_p4, d5_p5, 3.0f, WHITE, degree4Segments);
+        DrawText("Degree 5 Bézier", 950, 50, 20, GRAY);
+        b.drawDegree5Curve(d5_p0, d5_p1, d5_p2, d5_p3, d5_p4, d5_p5, 3.0f, WHITE, degree5Segments);
         DrawLineV(d5_p0, d5_p1, GRAY);
         DrawLineV(d5_p1, d5_p2, GRAY);
         DrawLineV(d5_p2, d5_p3, GRAY);
