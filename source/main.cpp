@@ -47,12 +47,19 @@ int main(void)
     Vector2 d4_p2 = { 650, (float)screenHeight - 100 };
     Vector2 d4_p3 = { 700, (float)screenHeight / 2 };
     Vector2 d4_p4 = { 750, (float)screenHeight - 100 };
+    Vector2 d5_p0 = { 800, (float)screenHeight / 2 };
+    Vector2 d5_p1 = { 850, 100 };
+    Vector2 d5_p2 = { 900, (float)screenHeight - 100 };
+    Vector2 d5_p3 = { 950, (float)screenHeight / 2 };
+    Vector2 d5_p4 = { 1000, (float)screenHeight - 100 };
+    Vector2 d5_p5 = { 1050, (float)screenHeight - 100 };
 
-    int selectedPoint = 0; // 0 = None, 1-3 = Quad, 4-7 = Cubic, 8-12
+    int selectedPoint = 0; // 0 = None, 1-3 = Quad, 4-7 = Cubic, 8-12 = Degree 4, 13-18 = Degree 5
     bool isMovementFrozen = true;
     int quadraticSegments = 10;
     int cubicSegments = 10;
     int degree4Segments = 10;
+    int degree5Segments = 10;
     while (!WindowShouldClose())
     {
         Vector2 mousePos = GetMousePosition();
@@ -80,6 +87,12 @@ int main(void)
                     case 10: d4_p2 = mousePos; break;
                     case 11: d4_p3 = mousePos; break;
                     case 12: d4_p4 = mousePos; break;
+                    case 13: d5_p0 = mousePos; break;
+                    case 14: d5_p1 = mousePos; break;
+                    case 15: d5_p2 = mousePos; break;
+                    case 16: d5_p3 = mousePos; break;
+                    case 17: d5_p4 = mousePos; break;
+                    case 18: d5_p5 = mousePos; break;
                 }
             }
         }
@@ -114,6 +127,20 @@ int main(void)
         DrawControlPoint(d4_p2, YELLOW, selectedPoint == 10, isMovementFrozen);
         DrawControlPoint(d4_p3, YELLOW,   selectedPoint == 11, isMovementFrozen);
         DrawControlPoint(d4_p4, BLUE,   selectedPoint == 12, isMovementFrozen);
+
+        DrawText("Degree 5 Bézier", 800, 50, 20, GRAY);
+        b.drawDegree5Curve(d5_p0, d5_p1, d5_p2, d5_p3, d5_p4, d5_p5, 3.0f, WHITE, degree4Segments);
+        DrawLineV(d5_p0, d5_p1, GRAY);
+        DrawLineV(d5_p1, d5_p2, GRAY);
+        DrawLineV(d5_p2, d5_p3, GRAY);
+        DrawLineV(d5_p3, d5_p4, GRAY);
+        DrawLineV(d5_p4, d5_p5, GRAY);
+        DrawControlPoint(d5_p0, BLUE,   selectedPoint == 13, isMovementFrozen);
+        DrawControlPoint(d5_p1, GREEN, selectedPoint == 14, isMovementFrozen);
+        DrawControlPoint(d5_p2, GREEN, selectedPoint == 15, isMovementFrozen);
+        DrawControlPoint(d5_p3, GREEN,   selectedPoint == 16, isMovementFrozen);
+        DrawControlPoint(d5_p4, GREEN,   selectedPoint == 17, isMovementFrozen);
+        DrawControlPoint(d5_p5, BLUE,   selectedPoint == 18, isMovementFrozen);
 
         rlImGuiBegin();
         ImGui::Begin("Control Panel");
@@ -153,14 +180,23 @@ int main(void)
         ImGui::RadioButton("D4 Control (P3)", &selectedPoint, 11);
         ImGui::RadioButton("D4 End (P4)", &selectedPoint, 12);
         ImGui::Separator();
+        ImGui::Text("Degree 5 Curve");
+        ImGui::RadioButton("D5 Start (P0)", &selectedPoint, 13);
+        ImGui::RadioButton("D5 Control (P1)", &selectedPoint, 14);
+        ImGui::RadioButton("D5 Control (P2)", &selectedPoint, 15);
+        ImGui::RadioButton("D5 Control (P3)", &selectedPoint, 16);
+        ImGui::RadioButton("D5 Control (P4)", &selectedPoint, 17);
+        ImGui::RadioButton("D5 End (P5)", &selectedPoint, 18);
+        ImGui::Separator();
         ImGui::Text("Curve Smoothness:");
         ImGui::SliderInt("Quadratic Segments", &quadraticSegments, 1, 20);
         ImGui::SliderInt("Cubic Segments", &cubicSegments, 1, 20);
         ImGui::SliderInt("Degree 4 Segments", &degree4Segments, 1, 20);
+        ImGui::SliderInt("Degree 5 Segments", &degree5Segments, 1, 20);
         ImGui::End();
         rlImGuiEnd();
         EndDrawing();
-
+    }
     rlImGuiShutdown();
     CloseWindow();
     return 0;
