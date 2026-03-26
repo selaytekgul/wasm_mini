@@ -148,7 +148,7 @@ int main(void)
         ImGui::Text("Movement Status:");
         if (isMovementFrozen)
         {
-            ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.4f, 1.0f), "FROZEN");
+            ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.4f, 1.0f), "FROZEN!");
             ImGui::Text("Click in the window to unfreeze.");
         }
         else
