@@ -229,7 +229,12 @@ int main(void)
             if (!frozen && selKnot >= 0 && selKnot < (int)spline.knots.size())
             {
                 SplineKnot& k = spline.knots[selKnot];
-                if (selPart == 0)      k.pos = mouse;
+                if (selPart == 0) {
+                    Vector2 d = { mouse.x - k.pos.x, mouse.y - k.pos.y };
+                    k.pos = mouse;
+                    k.hIn  = { k.hIn.x + d.x,  k.hIn.y + d.y };
+                    k.hOut = { k.hOut.x + d.x, k.hOut.y + d.y };
+                }
                 else if (selPart == 1) { k.hIn = mouse;  spline.enforceC1(selKnot, false); }
                 else                   { k.hOut = mouse; spline.enforceC1(selKnot, true);  }
             }
