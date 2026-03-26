@@ -1,29 +1,20 @@
 #include "CubicBezierSpline.h"
 #include "Bezier.h"
-
 #include "imgui.h"
 #include "rlImGui.h"
+#include <cstdio>
 
 using namespace raylib;
-static void DrawControlPoint(Vector2 pos, Color color, bool isSelected, bool isFrozen)
+
+void DrawControlPoint(Vector2 pos, Color color, bool isSelected, bool isFrozen)
 {
     if (isSelected)
     {
         DrawCircleV(pos, 10, WHITE);
-        if (isFrozen)
-        {
-            DrawCircleV(pos, 8, BLACK);
-            DrawCircleV(pos, 6, color);
-        }
-        else
-        {
-            DrawCircleV(pos, 8, color);
-        }
+        if (isFrozen) { DrawCircleV(pos, 8, BLACK); DrawCircleV(pos, 6, color); }
+        else          { DrawCircleV(pos, 8, color); }
     }
-    else
-    {
-        DrawCircleV(pos, 7, color);
-    }
+    else { DrawCircleV(pos, 7, color); }
 }
 
 void runOriginalBezierDemo()
@@ -31,7 +22,7 @@ void runOriginalBezierDemo()
     Bezier b;
     const int screenWidth = 1280;
     const int screenHeight = 720;
-    InitWindow(screenWidth, screenHeight, "Bézier (Original Demo)");
+    InitWindow(screenWidth, screenHeight, "Bézier");
     SetTargetFPS(60);
     rlImGuiSetup(true);
 
@@ -69,9 +60,8 @@ void runOriginalBezierDemo()
         if (!io.WantCaptureMouse)
         {
             if (IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
-            {
                 isMovementFrozen = !isMovementFrozen;
-            }
+
             if (!isMovementFrozen)
             {
                 switch (selectedPoint)
@@ -99,7 +89,6 @@ void runOriginalBezierDemo()
         }
         BeginDrawing();
         ClearBackground(BLACK);
-
         DrawText("Quadratic Bézier", 50, 50, 20, GRAY);
         b.drawQuadraticCurveUsingSlider(q_p0, q_p1, q_p2, 3.0f, WHITE, quadraticSegments, quadraticSlider);
         DrawLineV(q_p0, q_p1, GRAY);
@@ -203,31 +192,89 @@ void runOriginalBezierDemo()
     CloseWindow();
 }
 
+// ═══════════════════════════════════════════════════════════════════
+
 int main(void)
 {
-    const int screenWidth  = 1280;
-    const int screenHeight = 720;
-    InitWindow(screenWidth, screenHeight, "Cubic Bézier");
+    // runOriginalBezierDemo(); return 0;
+
+    const int W = 1280, H = 720;
+    InitWindow(W, H, "Cubic Bezier Spline - C1");
     SetTargetFPS(60);
     rlImGuiSetup(true);
 
     CubicBezierSpline spline;
+    float margin = 150.0f, spacing = (W - 2 * margin) / 4.0f;
+    for (int i = 0; i < 5; i++)
+    {
+        float x = margin + i * spacing;
+        float y = H / 2.0f + ((i % 2 == 0) ? -100.0f : 100.0f);
+        spline.knots.push_back({ {x, y}, {x - 40, y}, {x + 40, y} });
+    }
+
+    int selKnot = -1, selPart = 0; // 0=pos, 1=hIn, 2=hOut
+    bool frozen = true;
+    int segments = 40;
 
     while (!WindowShouldClose())
     {
-        spline.update();
+        Vector2 mouse = GetMousePosition();
+        ImGuiIO& io = ImGui::GetIO();
+
+        if (!io.WantCaptureMouse)
+        {
+            if (IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
+                frozen = !frozen;
+
+            if (!frozen && selKnot >= 0 && selKnot < (int)spline.knots.size())
+            {
+                SplineKnot& k = spline.knots[selKnot];
+                if (selPart == 0)      k.pos = mouse;
+                else if (selPart == 1) { k.hIn = mouse;  spline.enforceC1(selKnot, false); }
+                else                   { k.hOut = mouse; spline.enforceC1(selKnot, true);  }
+            }
+        }
 
         BeginDrawing();
         ClearBackground(BLACK);
 
-        DrawText("Cubic Bezier",20, 20, 18, GRAY);
+        spline.drawSpline(segments);
 
-        spline.draw();
+        for (int i = 0; i < (int)spline.knots.size(); i++)
+        {
+            SplineKnot& k = spline.knots[i];
+            bool sel = (selKnot == i);
+            DrawLineV(k.hIn, k.pos, GRAY);
+            DrawLineV(k.pos, k.hOut, GRAY);
+            DrawCircleV(k.hIn,  5, (sel && selPart == 1) ? YELLOW : GRAY);
+            DrawCircleV(k.hOut, 5, (sel && selPart == 2) ? YELLOW : GRAY);
+            DrawCircleV(k.pos,  7, (sel && selPart == 0) ? YELLOW : RED);
+        }
 
         rlImGuiBegin();
-        spline.drawImGui();
-        rlImGuiEnd();
+        ImGui::Begin("Spline Control");
 
+        if (frozen) { ImGui::TextColored({1,0.4f,0.4f,1}, "FROZEN"); }
+        else        { ImGui::TextColored({0.4f,1,0.4f,1}, "ACTIVE"); }
+
+        ImGui::SliderInt("Segments", &segments, 5, 100);
+        ImGui::Separator();
+
+        int enc = (selKnot < 0) ? -1 : selKnot * 3 + selPart;
+        ImGui::RadioButton("None", &enc, -1);
+        for (int i = 0; i < (int)spline.knots.size(); i++)
+        {
+            ImGui::Separator();
+            char l[32];
+            std::snprintf(l, 32, "K%d Pos", i);         ImGui::RadioButton(l, &enc, i * 3);
+            std::snprintf(l, 32, "K%d Handle In", i);   ImGui::RadioButton(l, &enc, i * 3 + 1);
+            std::snprintf(l, 32, "K%d Handle Out", i);  ImGui::RadioButton(l, &enc, i * 3 + 2);
+        }
+        if (enc < 0) { selKnot = -1; selPart = 0; }
+        else         { selKnot = enc / 3; selPart = enc % 3; }
+
+        ImGui::End();
+        rlImGuiEnd();
         EndDrawing();
     }
 
