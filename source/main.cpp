@@ -1,15 +1,15 @@
+#include "CubicBezierSpline.h"
 #include "Bezier.h"
 
 #include "imgui.h"
 #include "rlImGui.h"
 
 using namespace raylib;
-void DrawControlPoint(Vector2 pos, Color color, bool isSelected, bool isFrozen)
+static void DrawControlPoint(Vector2 pos, Color color, bool isSelected, bool isFrozen)
 {
     if (isSelected)
     {
         DrawCircleV(pos, 10, WHITE);
-
         if (isFrozen)
         {
             DrawCircleV(pos, 8, BLACK);
@@ -26,12 +26,12 @@ void DrawControlPoint(Vector2 pos, Color color, bool isSelected, bool isFrozen)
     }
 }
 
-int main(void)
+void runOriginalBezierDemo()
 {
     Bezier b;
     const int screenWidth = 1280;
     const int screenHeight = 720;
-    InitWindow(screenWidth, screenHeight, "Bézier");
+    InitWindow(screenWidth, screenHeight, "Bézier (Original Demo)");
     SetTargetFPS(60);
     rlImGuiSetup(true);
 
@@ -54,13 +54,14 @@ int main(void)
     Vector2 d5_p4 = { 1000, (float)screenHeight - 100 };
     Vector2 d5_p5 = { 1050, (float)screenHeight - 100 };
 
-    int selectedPoint = 0; // 0 = None, 1-3 = Quad, 4-7 = Cubic, 8-12 = Degree 4, 13-18 = Degree 5
+    int selectedPoint = 0;
     bool isMovementFrozen = true;
     int quadraticSlider = 1;
     int quadraticSegments = 10;
     int cubicSegments = 10;
     int degree4Segments = 10;
     int degree5Segments = 10;
+
     while (!WindowShouldClose())
     {
         Vector2 mousePos = GetMousePosition();
@@ -71,7 +72,6 @@ int main(void)
             {
                 isMovementFrozen = !isMovementFrozen;
             }
-
             if (!isMovementFrozen)
             {
                 switch (selectedPoint)
@@ -99,6 +99,7 @@ int main(void)
         }
         BeginDrawing();
         ClearBackground(BLACK);
+
         DrawText("Quadratic Bézier", 50, 50, 20, GRAY);
         b.drawQuadraticCurveUsingSlider(q_p0, q_p1, q_p2, 3.0f, WHITE, quadraticSegments, quadraticSlider);
         DrawLineV(q_p0, q_p1, GRAY);
@@ -126,7 +127,7 @@ int main(void)
         DrawControlPoint(d4_p0, BLUE,   selectedPoint == 8, isMovementFrozen);
         DrawControlPoint(d4_p1, YELLOW, selectedPoint == 9, isMovementFrozen);
         DrawControlPoint(d4_p2, YELLOW, selectedPoint == 10, isMovementFrozen);
-        DrawControlPoint(d4_p3, YELLOW,   selectedPoint == 11, isMovementFrozen);
+        DrawControlPoint(d4_p3, YELLOW, selectedPoint == 11, isMovementFrozen);
         DrawControlPoint(d4_p4, BLUE,   selectedPoint == 12, isMovementFrozen);
 
         DrawText("Degree 5 Bézier", 950, 50, 20, GRAY);
@@ -136,12 +137,12 @@ int main(void)
         DrawLineV(d5_p2, d5_p3, GRAY);
         DrawLineV(d5_p3, d5_p4, GRAY);
         DrawLineV(d5_p4, d5_p5, GRAY);
-        DrawControlPoint(d5_p0, BLUE,   selectedPoint == 13, isMovementFrozen);
+        DrawControlPoint(d5_p0, BLUE,  selectedPoint == 13, isMovementFrozen);
         DrawControlPoint(d5_p1, GREEN, selectedPoint == 14, isMovementFrozen);
         DrawControlPoint(d5_p2, GREEN, selectedPoint == 15, isMovementFrozen);
-        DrawControlPoint(d5_p3, GREEN,   selectedPoint == 16, isMovementFrozen);
-        DrawControlPoint(d5_p4, GREEN,   selectedPoint == 17, isMovementFrozen);
-        DrawControlPoint(d5_p5, BLUE,   selectedPoint == 18, isMovementFrozen);
+        DrawControlPoint(d5_p3, GREEN, selectedPoint == 16, isMovementFrozen);
+        DrawControlPoint(d5_p4, GREEN, selectedPoint == 17, isMovementFrozen);
+        DrawControlPoint(d5_p5, BLUE,  selectedPoint == 18, isMovementFrozen);
 
         rlImGuiBegin();
         ImGui::Begin("Control Panel");
@@ -156,7 +157,6 @@ int main(void)
             ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "ACTIVE");
             ImGui::Text("Click in the window to freeze.");
         }
-
         ImGui::Separator();
         ImGui::Text("Select Point to Move:");
         ImGui::Separator();
@@ -199,6 +199,38 @@ int main(void)
         rlImGuiEnd();
         EndDrawing();
     }
+    rlImGuiShutdown();
+    CloseWindow();
+}
+
+int main(void)
+{
+    const int screenWidth  = 1280;
+    const int screenHeight = 720;
+    InitWindow(screenWidth, screenHeight, "Cubic Bézier");
+    SetTargetFPS(60);
+    rlImGuiSetup(true);
+
+    CubicBezierSpline spline;
+
+    while (!WindowShouldClose())
+    {
+        spline.update();
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        DrawText("Cubic Bezier",20, 20, 18, GRAY);
+
+        spline.draw();
+
+        rlImGuiBegin();
+        spline.drawImGui();
+        rlImGuiEnd();
+
+        EndDrawing();
+    }
+
     rlImGuiShutdown();
     CloseWindow();
     return 0;
